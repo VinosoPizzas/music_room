@@ -8,6 +8,7 @@ from requests import post, put, get
 BASE_URL = "https://api.spotify.com/v1/me/"
 
 
+#coletar o id do usuário, e colocar em uma lista
 def get_user_tokens(session_id):
     user_tokens = SpotifyToken.objects.filter(user=session_id)
     print(user_tokens)
@@ -16,7 +17,7 @@ def get_user_tokens(session_id):
     else:
         return None
 
-
+#atualizar as informações da token
 def update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token):
     tokens = get_user_tokens(session_id)
     expires_in = timezone.now() + timedelta(seconds=expires_in)
@@ -33,7 +34,7 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
                               refresh_token=refresh_token, token_type=token_type, expires_in=expires_in)
         tokens.save()
 
-
+#autênticar a token, se ele tiver expirada vai renovar o prazo
 def is_spotify_authenticated(session_id):
     tokens = get_user_tokens(session_id)
     if tokens:
@@ -46,6 +47,7 @@ def is_spotify_authenticated(session_id):
     return False
 
 
+#renovar a token
 def refresh_spotify_token(session_id):
     refresh_token = get_user_tokens(session_id).refresh_token
 
@@ -62,3 +64,4 @@ def refresh_spotify_token(session_id):
     refresh_token = response.get('refresh_token')
 
     update_or_create_user_tokens(
+        session_id, access_token, token_type, expires_in, refresh_token)

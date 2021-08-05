@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig', #coloca a pasta api do diretório principal, e basicamente é o que faz funcionar tudo através de alguma mágica que eu desconheço
     'rest_framework', #msm esquema
-    'frontend.apps.FrontendConfig' #instala o frontend dentro da aplicação
+    'frontend.apps.FrontendConfig', #instala o frontend dentro da aplicação
+    'spotify.apps.SpotifyConfig',
 ]
 
 MIDDLEWARE = [
