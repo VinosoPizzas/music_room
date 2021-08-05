@@ -1,4 +1,3 @@
-from spotify.views import AuthURL
 from django.urls import path
 from .views import AuthURL, spotify_callback, IsAuthenticated
 
