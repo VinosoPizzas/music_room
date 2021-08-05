@@ -1,4 +1,4 @@
-from music_room.spotify.views import AuthURL
+from spotify.views import AuthURL
 from django.urls import path
 from .views import AuthURL
 
