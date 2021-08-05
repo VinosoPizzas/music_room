@@ -73,7 +73,7 @@ class CurrentSong(APIView):
         host = room.host
         endpoint = "player/currently-playing"
         response = execute_spotify_api_request(host, endpoint)
-        
+
         if 'error' in response or 'item' not in response:
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
@@ -92,6 +92,7 @@ class CurrentSong(APIView):
             name = artist.get('name')
             artist_string += name
 
+        votes = len(Vote.objects.filter(room=room, song_id=song_id))
         song = {
             'title': item.get('name'),
             'artist': artist_string,
@@ -99,11 +100,23 @@ class CurrentSong(APIView):
             'time': progress,
             'image_url': album_cover,
             'is_playing': is_playing,
-            'votes': 0,
+            'votes': votes,
+            'votes_required': room.votes_to_skip,
             'id': song_id
         }
 
+        self.update_room_song(room, song_id)
+
         return Response(song, status=status.HTTP_200_OK)
+
+    def update_room_song(self, room, song_id):
+        current_song = room.current_song
+
+        if current_song != song_id:
+            room.current_song = song_id
+            room.save(update_fields=['current_song'])
+            votes = Vote.objects.filter(room=room).delete()
+
 
 class PauseSong(APIView):
     def put(self, response, format=None):
