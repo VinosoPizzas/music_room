@@ -17,6 +17,7 @@ def get_user_tokens(session_id):
     else:
         return None
 
+
 #atualizar as informações da token e guardar no database
 def update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token):
     tokens = get_user_tokens(session_id)
@@ -33,6 +34,7 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
         tokens = SpotifyToken(user=session_id, access_token=access_token,
                               refresh_token=refresh_token, token_type=token_type, expires_in=expires_in)
         tokens.save()
+
 
 #autênticar a token, se ele tiver expirada vai renovar o prazo
 def is_spotify_authenticated(session_id):
@@ -81,3 +83,11 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
         return response.json()
     except:
         return{'Error': 'Issue with request'}
+
+
+def play_song(session_id):
+    return execute_spotify_api_request(session_id, "player/play", put_=True)
+
+
+def pause_song(session_id):
+    return execute_spotify_api_request(session_id, "player/pause", put_=True)
